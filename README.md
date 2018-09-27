@@ -27,7 +27,7 @@ to make just the program to reproduce the histogram files [testEffi3DB0-2016-mak
 make hist
 ```
 
-to execute the test program 'testEffi' :
+to execute the test program 'testEffi' to compare data and efficiency parametrization for a Q^2 bin:
 ``` 
 
 ./testEffi QBin2 [where QBin2=0,1,2,3,4,5,6,7,8]
