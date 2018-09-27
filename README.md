@@ -62,12 +62,25 @@ where *=0,1,2,3,4,5,6,7,8.
 These root files are stored in /afs/cern.ch/user/d/dini/public/AngularEffi1, and can be reproduced by executing the program
 testEffi3DB0-2016-makeHisto:
 
+```
+
+./testEffi3DB0-2016-makeHisto QBin2 [where QBin2=0,1,2,3,4,5,6,7,8] e
+
+
+```
+
 i.e. the output of the command :
 ```
 
-./testEffi3DB0-2016-makeHisto 3
+./testEffi3DB0-2016-makeHisto 3 e
 
 is the file  testGoofitEffi3DB0-2016-InputHisto-Q2Bin-3-Bins-25-25-25.root
+
+N.B. the option "e" means that the ntuples input files are searched in the original directories on EOS, otherwise, if you have the
+files in your directory, simple type :
+
+./testEffi3DB0-2016-makeHisto 3 
+
 
 ```
 
