@@ -76,8 +76,8 @@ i.e. the output of the command :
 
 is the file  testGoofitEffi3DB0-2016-InputHisto-Q2Bin-3-Bins-25-25-25.root
 
-N.B. the option "e" means that the ntuples input files are searched in the original directories on EOS, otherwise, if you have the
-files in your directory, simple type :
+N.B. the option "e" means that the ntuples input files are searched in the original directories on EOS, otherwise, 
+if you have the files in your directory, simple type :
 
 ./testEffi3DB0-2016-makeHisto 3 
 
