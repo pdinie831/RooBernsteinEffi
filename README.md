@@ -4,7 +4,7 @@ The test code for the Class RooBernsteinEffi is C11 compliant.
 [i.e. to compile on fly in lxplus you can set:  
 scl enable devtoolset-7 tcsh]
 
-to compile&make dictionary for the RooBernsteinEffi class :
+to compile all the executables (testEffi and testEffi3DB0-2016-makeHisto) && make dictionary for the RooBernsteinEffi class :
 ```
 make all
 ```
@@ -19,6 +19,12 @@ to make just the dictionary for the class RooBernsteinEffi :
 ```
 
 make dict
+```
+
+to make just the program to reproduce the histogram files [testEffi3DB0-2016-makeHisto] :
+```
+
+make hist
 ```
 
 to execute the test program 'testEffi' :
@@ -48,10 +54,23 @@ where *=0,1,2,3,4,5,6,7,8.
 
 to make the comparison with data histograms, the program testEffi read the files : 
 
-testGoofitEffi3DB0-2016-Q2Bin-*-Bins-25-25-25-BernDeg-5-5-4-integraBin.root 
+testGoofitEffi3DB0-2016-InputHisto-Q2Bin-*-Bins-25-25-25.root 
 where *=0,1,2,3,4,5,6,7,8. 
 
-These root files are stored in /afs/cern.ch/user/d/dini/public/AngularEffi1.
+
+
+These root files are stored in /afs/cern.ch/user/d/dini/public/AngularEffi1, and can be reproduced by executing the program
+testEffi3DB0-2016-makeHisto:
+
+i.e. the output of the command :
+```
+
+./testEffi3DB0-2016-makeHisto 3
+
+is the file  testGoofitEffi3DB0-2016-InputHisto-Q2Bin-3-Bins-25-25-25.root
+
+```
+
 
 =================================================================
 
