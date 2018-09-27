@@ -1,7 +1,8 @@
 =================================================================
 
 The test code for the Class RooBernsteinEffi is C11 compliant. 
-[i.e. to compile on fly in lxplus you can set:  scl enable devtoolset-7 tcsh]
+[i.e. to compile on fly in lxplus you can set:  
+scl enable devtoolset-7 tcsh]
 
 to compile&make dictionary for the RooBernsteinEffi class :
 ```
