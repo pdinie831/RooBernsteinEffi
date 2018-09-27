@@ -10,6 +10,7 @@
 //*  P.Dini fecit, Anno Domini MMXVIII                                          *
 //*                                                                             *
 //*******************************************************************************
+//g++ -O3 -o testEffi3DB0-2016-makeHisto testEffi3DB0-2016-makeHisto.cc `root-config --cflags --libs` -lProof  -lRooFit
 
 
 #include <stdio.h>
@@ -39,6 +40,7 @@
 #include <TSystem.h>
 #include <TTree.h>
 #include <TCanvas.h>
+#include <TChain.h>
 #include "TBranch.h"
 #include <TApplication.h>
 #include <TFile.h>
@@ -55,9 +57,12 @@ void CreateInputHistoFile();
   char InputFileNameMCGene[300]   = "2016MC_GEN_LMNR_double_add2.root";
 //
 //********************************************************************************************************
-  char InputRecoB0TreeName[10]    = "ntuple";
-  char InputGeneB0TreeName[10]    = "ntuple";
-
+char InputRecoB0TreeName[10]	= "ntuple";
+char InputGeneB0TreeName[10]	= "ntuple";
+char eosRecoDir[100] = "/eos/cms/store/user/fiorendi/p5prime/2016/skims/";
+char eosGeneDir[100] = "/eos/cms/store/user/fiorendi/p5prime/2016/skims/GEN/";
+char RecoDir[100]    =  ".";
+char GeneDir[100]    =  ".";
 double Q2Min = 0.; 
 double Q2Max = 0.; 
 int    Q2Bin = -1;
@@ -208,12 +213,24 @@ switch ( *argv[1] ) {
   default : 
     // Process for all other cases.
     cout<<"Q2Bin not set correctly!!!"<<endl;
-    cout<<"Usage: "<<argv[0]<< " QBin2 [where QBin2=0,1,2,3,4,5,6,7,8]\n"<<endl;
+    cout<<"Usage: "<<argv[0]<< " QBin2 [where QBin2=0,1,2,3,4,5,6,7,8] dir [where dir=e if you want to read files from Sara's directories]\n"<<endl;
     exit(1);
 
 }
+
   std::cout<<"--------------------------------------------\n"<<endl;
   std::cout<<" Setting selection for Q^2 bin: "<<*argv[1]<<" ==> "<<Q2Min<<"<Q^2<"<<Q2Max<<std::endl;
+  std::cout<<"--------------------------------------------\n"<<endl;
+  std::cout<<"--------------------------------------------\n"<<endl;
+if (argc>2 && (strcmp(argv[2],"e") == 0) ){
+
+  std::cout<<" Setting EOS ad directory files  \n"<<endl;
+  memcpy ( GeneDir, eosGeneDir, strlen(eosGeneDir)+1 );
+  memcpy ( RecoDir, eosRecoDir, strlen(eosRecoDir)+1 );
+
+}
+  std::cout<<" Reading MC Reconstructed  files in directory: "<<RecoDir<<std::endl;
+  std::cout<<" Reading MC Generated      file: in directory: "<<GeneDir<<std::endl;
   std::cout<<"--------------------------------------------\n"<<endl;
 
   sprintf(PDFNameRecoHisto,"B0-RecoHist-2016-OnlyPlot-Q2Bin-%d-Bins-%d-%d-%d.pdf", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin); 
@@ -245,44 +262,43 @@ void CreateInputHistoFile(){
   c3->Divide(2,2);  
   c4->Divide(2,2);  
   c5->Divide(2,2);  
-  TFile*InputFileMCReco = TFile::Open(InputFileNameMCReco,"READ","ROOT file");
   
-  if (!InputFileMCReco)
-   {
-     cout<<"File:"<<InputFileNameMCReco<<" not found!!!"<<endl;
-    exit(1);
-   }
-   InputFileMCReco->ls();
-   
-   TTree *RecoB0Tree    = (TTree*)InputFileMCReco->Get(InputRecoB0TreeName);
-   if(!RecoB0Tree ){
-     cout<<"TTree Reco Data: "<< InputRecoB0TreeName <<" not found!!!"<<endl;
-     exit(1);
-   }else{
-     cout<<"TTree Reco Data: "<< InputRecoB0TreeName <<" OK FOUND!!!"<<endl;
-   }  
-  
-  TFile*InputFileMCGene = TFile::Open(InputFileNameMCGene,"READ","ROOT file");
-  if (!InputFileMCGene)
-   {
-     cout<<"File:"<<InputFileNameMCGene<<" not found!!!"<<endl;
-    exit(1);
-   }
-   InputFileMCGene->ls();
-   
-   TTree *GeneB0Tree    = (TTree*)InputFileMCGene->Get(InputGeneB0TreeName);
-   if(!GeneB0Tree ){
-     cout<<"TTree Gene Data: "<< InputGeneB0TreeName <<" not found!!!"<<endl;
-     exit(1);
-   }else{
-     cout<<"TTree Gene Data: "<< InputGeneB0TreeName <<" OK FOUND!!!"<<endl;
-   }  
-  
-  
+  TChain* RecoB0Tree = new TChain();
 
+  int nfile = 0;
+  
+  nfile = RecoB0Tree->Add(Form("%s/2016MC_RECO_p1p2p3_newtag_LMNR_addW_add4BDT_addvars_bestBDTv4.root/%s",RecoDir,InputRecoB0TreeName));  
+  if(nfile==0 ||  !RecoB0Tree->GetFile() ){
+    cout<<"Error:  no Reco files found!!!\n"<<endl;
+    exit(1);
+  }else{
+    printf("Try to open %s/2016MC_RECO_p1p2p3_newtag_LMNR_addW_add4BDT_addvars_bestBDTv4.root/%s \n",RecoDir,InputRecoB0TreeName);
+    cout<<"Opening "<<nfile <<" Reco files found!!!\n"<<endl;
+  }  
+  if(!RecoB0Tree ){
+    cout<<"TTree Reco Data: "<< InputRecoB0TreeName <<" not found!!!\n"<<endl;
+    exit(1);
+  }else{
+    cout<<"TTree Reco Data: "<< InputRecoB0TreeName <<" OK FOUND!!!\n"<<endl;
+  }  
+  nfile = 0;
+  TChain* GeneB0Tree = new TChain();  
+  nfile = GeneB0Tree->Add(Form("%s/2016MC_GEN_LMNR_double_sub*_p*.root/%s",GeneDir,InputGeneB0TreeName));
+  if( nfile==0 ||  !GeneB0Tree->GetFile() ){
+    cout<<"Error:  no Gene files found!!!\n"<<endl;
+    exit(1);
+  }else{
+    printf("Try to open %s/2016MC_GEN_LMNR_double_sub*_p*.root/%s \n",GeneDir,InputGeneB0TreeName);
+    cout<<"Opening "<<nfile <<" Gene files found!!!\n"<<endl;
+  }  
+  if(!GeneB0Tree ){
+    cout<<"TTree Gene Data: "<< InputGeneB0TreeName <<" not found!!!\n"<<endl;
+    exit(1);
+  }else{
+    cout<<"TTree Gene Data: "<< InputGeneB0TreeName <<" OK FOUND!!!\n"<<endl;
+  }  
 
   printf("(Mass Window     : xB0Mass>%8f && xB0Mass<%8f \n",XMinSign,XMaxSign);
-
 
 
 
