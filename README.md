@@ -43,7 +43,7 @@ is the test file for the Q^2 bin 3 projections:
 testEffiRooFit-2016-Q2Bin-3-Bins-25-25-25-BernDeg-5-5-4.root
 ```
 
-where in TCanvas "ProjEffiPlots" you can find the projections of  the efficiency in Cos(l), Cos(K) and Phi for the binning 25x25x25 and, 
+opening this file, in TCanvas "ProjEffiPlots" you can find the projections of  the efficiency in Cos(l), Cos(K) and Phi for the binning 25x25x25 and, 
 superimposed, the projections of the fit with multivariate Bernstein polynomial of degree 5x5x4. 
 In TCanvas "ClosurePlots" are shown the projections of the reconstructed events and, superimpose, the (generated events) x (efficiency function). 
 
