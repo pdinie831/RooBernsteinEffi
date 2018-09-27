@@ -44,10 +44,14 @@
 #include <RooAbsCategory.h>
 #include <RooRealVar.h>
 #include "RooBernsteinEffi.h"
+#include  <TStopwatch.h>
 using namespace std;
 
 
 int main (int argc, char** argv) {
+
+  TStopwatch TimeWatch;
+  TimeWatch.Start();
 
 double Q2Min = 0.; 
 double Q2Max = 0.; 
@@ -62,9 +66,9 @@ double XMaxCosThetaK = 1.;
 double XMinPhi       =-TMath::Pi();
 double XMaxPhi       = TMath::Pi();
 bool   wrongTagged = false;
-char OutFileNameInputFit[300] =  "testGoofitEffi3DB0-2016-Q2Bin-3-Bins-25-25-25-BernDeg-5-5-4-integraBin.root";
-char OutFileName[300]         =  "testEffi-Bin3.root";
-char ListParName[300] 	      =  "ListParValues-2016-Q2Bin-3-Bins-25-25-25-BernDeg-5-5-4-integraBin.plo";
+char OutFileNameInputHisto[300] =  "";
+char OutFileName[300]           =  "";
+char ListParName[300] 	        =  "";
 
 //============================
 // maxDegree START
@@ -172,13 +176,13 @@ switch ( *argv[1] ) {
   std::cout<<" Num Param CosK:  "<<maxDegree2<<std::endl;
   std::cout<<" Num Param Phi :  "<<maxDegree3<<std::endl;
   std::cout<<"--------------------------------------------\n"<<endl;
+  sprintf(OutFileNameInputHisto,"testGoofitEffi3DB0-2016-InputHisto-Q2Bin-%d-Bins-%d-%d-%d.root", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin); 
 if (argc>2 && (strcmp(argv[2],"w") == 0) ){
   std::cout<<"====================================="<<endl;
   std::cout<<" Setting Wrong tagged analysis"<<std::endl;
   std::cout<<" Setting Wrong tagged analysis"<<std::endl;
   std::cout<<" Setting Wrong tagged analysis"<<std::endl;
   std::cout<<"====================================="<<endl;
-  sprintf(OutFileNameInputFit,"testGoofitEffi3DB0-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d-wrongTagged.root", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   sprintf(OutFileName,"testEffiRooFit-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d-wrongTagged.root", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   sprintf(ListParName,"ListParValues-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d-wrongTagged.plo", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   wrongTagged = true;
@@ -186,7 +190,6 @@ if (argc>2 && (strcmp(argv[2],"w") == 0) ){
   std::cout<<"======================================="<<endl;
   std::cout<<"======== DEFAULT: TAGGED =============="<<std::endl;
   std::cout<<"======================================="<<endl;
-  sprintf(OutFileNameInputFit,"testGoofitEffi3DB0-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d.root", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   sprintf(OutFileName,"testEffiRooFit-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d.root", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   sprintf(ListParName,"ListParValues-2016-Q2Bin-%d-Bins-%d-%d-%d-BernDeg-%d-%d-%d.plo", Q2Bin,xCosLHBin,xCosKHBin,xPhiHBin,maxDegree1,maxDegree2,maxDegree3); 
   wrongTagged = false;
@@ -196,9 +199,9 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
   std::cout<<"Setting the option: Efficiency function evaluated in the CENTER of the bin"<<std::endl;
   std::cout<<"=========================================================================="<<endl;
 //  
-  std::string str(OutFileNameInputFit) ;
+  std::string str(OutFileName) ;
   str.replace(str.end()-5,str.end(),"-centerBin.root");
-  sprintf(OutFileNameInputFit,str.c_str());
+  sprintf(OutFileName,str.c_str());
 //  
 
   std::string plo(ListParName) ;
@@ -209,9 +212,9 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
   std::cout<<"======== DEFAULT: INTEGRAL of the Efficiency in the bin  =============="<<std::endl;
   std::cout<<"======================================================================="<<endl;
 //  
-  std::string str(OutFileNameInputFit) ;
+  std::string str(OutFileName) ;
   str.replace(str.end()-5,str.end(),"-integraBin.root");
-  sprintf(OutFileNameInputFit,str.c_str());
+  sprintf(OutFileName,str.c_str());
 //  
   std::string plo(ListParName) ;
   plo.replace(plo.end()-4,plo.end(),"-integraBin.plo");
@@ -227,7 +230,7 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
 
   int numParameters = (maxDegree1+1)*(maxDegree2+1)*(maxDegree3+1);
 
-  TFile*OutFileInputFit=0;
+  TFile*OutFileInputHisto;
   TFile*OutFile = TFile::Open(OutFileName,"RECREATE");
   TH3D *HxReco=0;
   TH3D *HxGene=0;
@@ -242,20 +245,20 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
   double yBinw = (XMaxCosThetaK-XMinCosThetaK)/xCosKHBin;
   double zBinw = (XMaxPhi-XMinPhi)/xPhiHBin;
 
-  if (TFile::Open(OutFileNameInputFit,"READ"))
+  if (TFile::Open(OutFileNameInputHisto,"READ"))
   {
-   OutFileInputFit = TFile::Open(OutFileNameInputFit,"READ");
-   cout<<"File:"<<OutFileNameInputFit<<" FOUND !!!"<<endl;
+   OutFileInputHisto = TFile::Open(OutFileNameInputHisto,"READ");
+   cout<<"File:"<<OutFileNameInputHisto<<" FOUND !!!"<<endl;
   }else{
-    cout<<"File:"<<OutFileNameInputFit<<" not found!!! Exit..."<<endl;
-    exit(1);
+   cout<<"File:"<<OutFileNameInputHisto<<" not found!!! Exit..."<<endl;
+   exit(1);
   }
   if(wrongTagged){ 
-   HxReco    = (TH3D*)OutFileInputFit->Get("HwReco");
-   cout<<"Setting wrong tagged => events = "<<HxReco->GetEntries()<<endl;
+   HxReco    = (TH3D*)OutFileInputHisto->Get("HwReco");
+   cout<<"Setting wrong tagged"<<endl;
   }else{ 
-   HxReco    = (TH3D*)OutFileInputFit->Get("HxReco");
-   cout<<"Setting  tagged => events = "<<HxReco->GetEntries()<<endl;
+   HxReco    = (TH3D*)OutFileInputHisto->Get("HxReco");
+   cout<<"Setting  tagged"<<endl;
   } 
   if(!HxReco ){
     cout<<"HxReco Histo: not found!!! Exit..."<<endl;
@@ -263,35 +266,35 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
   }else{
     cout<<"HxReco Histo: OK FOUND!!! Entries: "<<HxReco->GetEntries()<<endl;
   }
-  HxGene    = (TH3D*)OutFileInputFit->Get("HxGene");
+  HxGene    = (TH3D*)OutFileInputHisto->Get("HxGene");
   if(!HxGene ){
     cout<<"HxGene Histo: not found!!! Exit..."<<endl;
     exit(1);
   }else{
     cout<<"HxGene Histo: OK FOUND!!! Entries: "<<HxGene->GetEntries()<<endl;
   }  
-  HEffi3D    = (TH3D*)OutFileInputFit->Get("HEffi3D");
+  HEffi3D    = (TH3D*)OutFileInputHisto->Get("HEffi3D");
   if(!HEffi3D ){
     cout<<"HEffi3D Histo: not found!!! Exit..."<<endl;
     exit(1);
   }else{
     cout<<"HEffi3D Histo: OK FOUND!!! Entries: "<<HEffi3D->GetEntries()<<endl;
   }  
-  HEffi3DX    = (TH1D*)OutFileInputFit->Get("HEffi3DX");
+  HEffi3DX    = (TH1D*)OutFileInputHisto->Get("HEffi3DX");
   if(!HEffi3DX ){
     cout<<"HEffi3DX Histo: not found!!! Exit..."<<endl;
     exit(1);
   }else{
     cout<<"HEffi3DX Histo: OK FOUND!!! Entries: "<<HEffi3DX->GetEntries()<<endl;
   }  
-  HEffi3DY    = (TH1D*)OutFileInputFit->Get("HEffi3DY");
+  HEffi3DY    = (TH1D*)OutFileInputHisto->Get("HEffi3DY");
   if(!HEffi3DY ){
     cout<<"HEffi3DY Histo: not found!!! Exit..."<<endl;
     exit(1);
   }else{
     cout<<"HEffi3DY Histo: OK FOUND!!! Entries: "<<HEffi3DY->GetEntries()<<endl;
   }  
-  HEffi3DZ    = (TH1D*)OutFileInputFit->Get("HEffi3DZ");
+  HEffi3DZ    = (TH1D*)OutFileInputHisto->Get("HEffi3DZ");
   if(!HEffi3DZ ){
     cout<<"HEffi3DZ Histo: not found!!! Exit..."<<endl;
     exit(1);
@@ -406,4 +409,8 @@ if (argc>3 && (strcmp(argv[3],"c") == 0) ){
    ClosurePlots->Write();
    ProjEffiPlots->Write();
    OutFile->Close();
+
+   TimeWatch.Stop();
+   TimeWatch.Print();
+   return 0;
 }

@@ -8,6 +8,7 @@ ROOTCINT := $(shell which rootcint)
 
 #exe_files
 EXECUTABLE  := testEffi
+EXMAKEHIST  := testEffi3DB0-2016-makeHisto
 CLASS       := RooBernsteinEffi
 CLASSDICT   := $(CLASS)Dictionary.cxx
 
@@ -19,21 +20,28 @@ CXXFLAGS := $(DEBUGFLAGS)
 LIBS := $(CLASS).cxx  $(CLASSDICT)
 
 	
-all: $(CLASSDICT) $(EXECUTABLE) 
+all: $(CLASSDICT) $(EXECUTABLE) $(EXMAKEHIST)
 
 dict: $(CLASSDICT)
+
+hist: $(EXMAKEHIST)
 
 $(CLASSDICT): $(CLASS).h $(CLASS)LinkDef.h
 	@echo "Generating dictionary $@ using rootcint ..."
 	$(ROOTCINT) -f $@ -c $^
 
-$(EXECUTABLE): testEffi.cc 
+$(EXECUTABLE): $(EXECUTABLE).cc 
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) $(ROOTLIBS) $(ROOTFLAGS) -I.
+
+$(EXMAKEHIST): $(EXMAKEHIST).cc 
+	$(CXX) $(CXXFLAGS)  -o $@  $^ $(ROOTLIBS) $(ROOTFLAGS) -I.
 
 
 
 #cleaning options
 .PHONY: clean cleanall
 clean:
-	rm -f $(OBJECTS) && rm -f $(EXECUTABLE) $(CLASSDICT)
+	rm -f $(OBJECTS) && rm -f $(EXECUTABLE) $(EXMAKEHIST) $(CLASSDICT)
+cleanhist:
+	rm -f  $(EXMAKEHIST)
 
