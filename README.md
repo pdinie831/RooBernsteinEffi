@@ -46,10 +46,12 @@ The coefficients (180) of the  fits are stored in ASCII file:
 ListParValues-2016-Q2Bin-*-Bins-25-25-25-BernDeg-5-5-4-integraBin.plo,
 where *=0,1,2,3,4,5,6,7,8.
 
-to make the comparison with data histograms, the program testEffi read the files 
+to make the comparison with data histograms, the program testEffi read the files : 
 
 testGoofitEffi3DB0-2016-Q2Bin-*-Bins-25-25-25-BernDeg-5-5-4-integraBin.root 
-where *=0,1,2,3,4,5,6,7,8. These are stored in /afs/cern.ch/user/d/dini/public/AngularEffi1.
+where *=0,1,2,3,4,5,6,7,8. 
+
+These root files are stored in /afs/cern.ch/user/d/dini/public/AngularEffi1.
 
 =================================================================
 
