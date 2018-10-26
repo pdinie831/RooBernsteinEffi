@@ -11,7 +11,7 @@
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooListProxy.h"
-#include "RooAbsReal.h"
+#include "RooAbsPdf.h"
 #include "RooAbsCategory.h"
 #include "TMath.h"
 
@@ -33,7 +33,8 @@ public:
   virtual TObject* clone(const char* newname) const { return new RooBernsteinEffi(*this,newname); }
   inline virtual ~RooBernsteinEffi() { }
   Double_t evaluateInt(fptype xBinw,fptype yBinw,fptype zBinw) const ;
-
+  Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const;
+  Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const;
 protected:
 
   RooRealProxy _x ;
